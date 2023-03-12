@@ -2,6 +2,7 @@ import math
 import pygame
 import random
 from pygame import mixer
+import io
 
 #Initialize Pygame
 pygame.init()
@@ -14,15 +15,23 @@ pygame.display.set_caption("WAR ATTACK")
 icono = pygame.image.load("avionDeCombate.png")
 pygame.display.set_icon(icono)
 
+#Convert font to bytes
+def font_bytes(fontbt):
+
+    with open(fontbt,'rb') as f:
+        ttf_bytes = f.read()
+    return io.BytesIO(ttf_bytes)
+
 #points
 points = 0
-font = pygame.font.Font('Molot.otf',32)
+font_as_bytes = font_bytes("Monster-Bites.ttf")
+font = pygame.font.Font(font_as_bytes,32)
 text_x = 10
 text_y = 10
-startGame_text = pygame.font.Font('Molot.otf',80)
-endGame_text = pygame.font.Font('Molot.otf',80)
-instructions_text = pygame.font.Font('Molot.otf',20)
-press_spacebar_text = pygame.font.Font('Molot.otf',40)
+startGame_text = pygame.font.Font(font_as_bytes,80)
+endGame_text = pygame.font.Font(font_as_bytes,80)
+instructions_text = pygame.font.Font(font_as_bytes,20)
+press_spacebar_text = pygame.font.Font(font_as_bytes,40)
 
 #music settings
 mixer.music.load('backGroundMusic.wav')
@@ -70,6 +79,7 @@ def start_game():
     screen.blit(showInstructionsText, (90, 300))
     screen.blit(showPressSpacebarText, (150, 350))
 
+#endgame text function
 def final_text():
     showEndGameText = endGame_text.render("YOU LOOSE",True,(255,0,0))
     screen.blit(showEndGameText,(200,200))
@@ -87,11 +97,13 @@ def player(x,y):
 def enemy(x,y,ene):
     screen.blit(img_enemy[e],(x,y))
 
+#shoot bullet function
 def shoot_bullet(x,y):
     global bullet_On
     bullet_On = True
     screen.blit(img_bullet,(x + 16, y + 10))
 
+#check collision bullet/enemy
 def isCollision (x_1, y_1 ,x_2 ,y_2):
     distance = math.sqrt(math.pow(x_2 - x_1, 2) + math.pow(y_2 - y_1, 2))
     if distance < 27:
@@ -193,7 +205,7 @@ while playing:
             shoot_bullet(bullet_x,bullet_y)
             bullet_y -= bullet_y_movement
 
-
+        #show points
         show_points(text_x,text_y)
 
         #update game
